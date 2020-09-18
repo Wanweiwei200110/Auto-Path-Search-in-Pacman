@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -676,7 +676,9 @@ if __name__ == '__main__':
 
     > python pacman.py --help
     """
-    args = readCommand( sys.argv[1:] ) # Get game components based on input
+    #args = readCommand( sys.argv[1:] ) # Get game components based on input
+    args = readCommand( ['-l', 'mediumMaze', '-p', 'SearchAgent'] ) # Get game components based on input
+    # args = readCommand(['-l', 'bigMaze', '-z', '.5', '-p', 'SearchAgent'])
     runGames( **args )
 
     # import cProfile
