@@ -125,6 +125,18 @@ def uniformCostSearch(problem):
     if problem.isGoalState(problem.getStartState()):
         return []
     queue = util.PriorityQueue()
+    queue.push(([problem.getStartState()], [], 0), 0)
+    seen = {problem.getStartState(): 0}
+    while not queue.isEmpty():
+        path = queue.pop()
+        if problem.isGoalState(path[0][-1]):
+            return path[1]
+        successors = problem.getSuccessors(path[0][-1])
+        for succ in successors:
+            cost = path[2] + succ[2]
+            if succ[0] not in seen or cost < seen[succ[0]]:
+                queue.push((path[0] + [succ[0]], path[1] + [succ[1]], cost), cost)
+                seen[succ[0]] = cost
 
 def nullHeuristic(state, problem=None):
     """
