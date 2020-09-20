@@ -677,16 +677,18 @@ if __name__ == '__main__':
     > python pacman.py --help
     """
     #args = readCommand( sys.argv[1:] ) # Get game components based on input
-    # args = readCommand( ['-l', 'mediumMaze', '-p', 'SearchAgent'] ) # Get game components based on input
+    # args = readCommand( ['-l', 'openMaze', '-p', 'SearchAgent'] ) # Get game components based on input
     # args = readCommand(['-l', 'bigMaze', '-z', '.5', '-p', 'SearchAgent'])
 
     # args = readCommand(['-l', 'mediumDottedMaze', '-p', 'SearchAgent', '-a', 'fn=bfs'])
-    # args = readCommand(['-l', 'mediumMaze', '-p', 'SearchAgent', '-a', 'fn=bfs'])
+    # args = readCommand(['-l', 'openMaze', '-p', 'SearchAgent', '-a', 'fn=bfs'])
     # args = readCommand(['-l', 'bigMaze', '-p', 'SearchAgent', '-a', 'fn=bfs', '-z', '.5'])
 
-    # args = readCommand(['-l', 'mediumMaze', '-p', 'SearchAgent', '-a', 'fn=ucs'])
+    # args = readCommand(['-l', 'openMaze', '-p', 'SearchAgent', '-a', 'fn=ucs'])
     # args = readCommand(['-l', 'mediumDottedMaze', '-p', 'StayEastSearchAgent'])
-    args = readCommand(['-l', 'mediumScaryMaze', '-p', 'StayWestSearchAgent'])
+    # args = readCommand(['-l', 'mediumScaryMaze', '-p', 'StayWestSearchAgent'])
+
+    args = readCommand(['-l', 'openMaze', '-z', '.5', '-p', 'SearchAgent', '-a', 'fn=astar,heuristic=manhattanHeuristic'])
 
     runGames( **args )
 
