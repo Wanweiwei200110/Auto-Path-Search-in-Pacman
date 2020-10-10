@@ -1,8 +1,4 @@
-autograder.py
-grading.py
-test*.py
 .DS_Store
-test_cases/
 __pycache__/
 .idea/
 
