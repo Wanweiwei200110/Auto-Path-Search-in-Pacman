@@ -676,7 +676,7 @@ if __name__ == '__main__':
 
     > python pacman.py --help
     """
-    #args = readCommand( sys.argv[1:] ) # Get game components based on input
+    # args = readCommand( sys.argv[1:] ) # Get game components based on input
     # args = readCommand( ['-l', 'openMaze', '-p', 'SearchAgent'] ) # Get game components based on input
     # args = readCommand(['-l', 'bigMaze', '-z', '.5', '-p', 'SearchAgent'])
 
@@ -688,9 +688,12 @@ if __name__ == '__main__':
     # args = readCommand(['-l', 'mediumDottedMaze', '-p', 'StayEastSearchAgent'])
     # args = readCommand(['-l', 'mediumScaryMaze', '-p', 'StayWestSearchAgent'])
 
-    args = readCommand(['-l', 'openMaze', '-z', '.5', '-p', 'SearchAgent', '-a', 'fn=astar,heuristic=manhattanHeuristic'])
+    # args = readCommand(['-l', 'openMaze', '-z', '.5', '-p', 'SearchAgent', '-a', 'fn=astar,heuristic=manhattanHeuristic'])
 
+    args = readCommand(['-l', 'tinyCorners', '-p', 'SearchAgent', '-a', 'fn=bfs,prob=CornersProblem'])
+    # args = readCommand(['-l', 'mediumCorners', '-p', 'AStarCornersAgent', '-z', '0.5'])
     runGames( **args )
+
 
     # import cProfile
     # cProfile.run("runGames( **args )")
