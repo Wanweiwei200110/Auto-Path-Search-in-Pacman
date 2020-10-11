@@ -107,17 +107,20 @@ def breadthFirstSearch(problem):
     if problem.isGoalState(problem.getStartState()):
         return []
     queue = util.Queue()
-    queue.push(([problem.getStartState()], []))
-    seen = [problem.getStartState()]
+    queue.push(([problem.getStartState()], [], 0))
+    seen = {problem.getStartState(): 0}
     while not queue.isEmpty():
         path = queue.pop()
-        if problem.isGoalState(path[0][-1]):
-            return path[1]
-        successors = problem.getSuccessors(path[0][-1])
-        for succ in successors:
-            if succ[0] not in seen:
-                queue.push((path[0] + [succ[0]], path[1] + [succ[1]]))
-                seen.append(succ[0])
+        if path[-1] <= seen[path[0][-1]]:
+            if problem.isGoalState(path[0][-1]):
+                return path[1]
+            successors = problem.getSuccessors(path[0][-1])
+            for succ in successors:
+                cost = path[2] + succ[2]
+                if succ[0] not in seen or cost < seen[succ[0]]:
+                    queue.push((path[0] + [succ[0]], path[1] + [succ[1]], cost))
+                    seen[succ[0]] = cost
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
@@ -152,25 +155,46 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         return []
     queue = util.PriorityQueue()
     queue.push(([problem.getStartState()], [], 0, 0), 0)
-    seen = [(problem.getStartState(), 0)]
+    seen = {problem.getStartState(): 0}
+    i = 0
     while not queue.isEmpty():
         path = queue.pop()
-        if problem.isGoalState(path[0][-1]):
-            return path[1]
-        successors = problem.getSuccessors(path[0][-1])
-        for succ in successors:
-            g = path[2] + succ[2]
-            h = heuristic(succ[0], problem)
-            visited = False
-            cheaper = False
-            for state in seen:
-                if state[0] == succ[0]:
-                    visited = True
-                    if g+h < state[1]:
-                        cheaper = True
-            if not visited or cheaper:
-                queue.push((path[0] + [succ[0]], path[1] + [succ[1]], g, g+h), g+h)
-                seen.append((succ[0], g+h))
+        if not queue.isEmpty():
+            next = queue.pop()
+            if path[-1] != next[-1]:
+                queue.push(next, next[-1])
+            else:
+                ties = [path, next]
+                while not queue.isEmpty():
+                    next_item = queue.pop()
+                    if next_item[-1] != path[-1]:
+                        queue.push(next_item, next_item[-1])
+                        break
+                    else:
+                        ties.append(next_item)
+                ind = 0
+                curr_max = 0
+                for tie in ties:
+                    if tie[2] > curr_max:
+                        curr_max = tie[2]
+                        ind = ties.index(tie)
+                path = ties.pop(ind)
+                for item in ties:
+                    queue.push(item, item[-1])
+        if path[2] <= seen[path[0][-1]]:
+            print("i: ", i, path[0][-1], path[3] - path[2], path[3])
+            i += 1
+            if problem.isGoalState(path[0][-1]):
+                return path[1]
+            if path[3] - path[2] == 2:
+                a = 15
+            successors = problem.getSuccessors(path[0][-1])
+            for succ in successors:
+                g = path[2] + succ[2]
+                h = heuristic(succ[0], problem)
+                if succ[0] not in seen or g < seen[succ[0]]:
+                    queue.push((path[0] + [succ[0]], path[1] + [succ[1]], g, g+h), g+h)
+                    seen[succ[0]] = g
 
 
 # Abbreviations

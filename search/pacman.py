@@ -607,6 +607,7 @@ def loadAgent(pacman, nographics):
                 return getattr(module, pacman)
     raise Exception('The agent ' + pacman + ' is not specified in any *Agents.py.')
 
+
 def replayGame( layout, actions, display ):
     import pacmanAgents, ghostAgents
     rules = ClassicGameRules()
@@ -690,8 +691,16 @@ if __name__ == '__main__':
 
     # args = readCommand(['-l', 'openMaze', '-z', '.5', '-p', 'SearchAgent', '-a', 'fn=astar,heuristic=manhattanHeuristic'])
 
-    args = readCommand(['-l', 'tinyCorners', '-p', 'SearchAgent', '-a', 'fn=bfs,prob=CornersProblem'])
+    # args = readCommand(['-l', 'tinyCorners', '-p', 'SearchAgent', '-a', 'fn=bfs,prob=CornersProblem'])
     # args = readCommand(['-l', 'mediumCorners', '-p', 'AStarCornersAgent', '-z', '0.5'])
+
+    # args = readCommand(['-l', 'testSearch', '-p', 'AStarFoodSearchAgent'])
+    # args = readCommand(['-l', 'trickySearch', '-p', 'AStarFoodSearchAgent'])
+    # args = readCommand(['-l', 'oneDotFocus', '-p', 'AStarFoodSearchAgent'])
+    args = readCommand(['-l', 'largeGrid', '-z', '0.25', '-p', 'AStarFoodSearchAgent'])
+
+    # args = readCommand(['-l', 'oneDotFocus', '-p', 'AStarFoodSearchAgent'])
+
     runGames( **args )
 
 
