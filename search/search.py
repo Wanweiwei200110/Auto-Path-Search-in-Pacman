@@ -156,38 +156,33 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     queue = util.PriorityQueue()
     queue.push(([problem.getStartState()], [], 0, 0), 0)
     seen = {problem.getStartState(): 0}
-    i = 0
     while not queue.isEmpty():
         path = queue.pop()
         if not queue.isEmpty():
             next = queue.pop()
-            if path[-1] != next[-1]:
-                queue.push(next, next[-1])
-            else:
+            if path[-1] == next[-1]:
                 ties = [path, next]
                 while not queue.isEmpty():
-                    next_item = queue.pop()
-                    if next_item[-1] != path[-1]:
-                        queue.push(next_item, next_item[-1])
+                    next = queue.pop()
+                    if next[-1] != path[-1]:
+                        queue.push(next, next[-1])
                         break
                     else:
-                        ties.append(next_item)
+                        ties.append(next)
                 ind = 0
                 curr_max = 0
-                for tie in ties:
-                    if tie[2] > curr_max:
-                        curr_max = tie[2]
-                        ind = ties.index(tie)
+                for i in range(len(ties)):
+                    if ties[i][2] > curr_max:
+                        curr_max = ties[i][2]
+                        ind = i
                 path = ties.pop(ind)
                 for item in ties:
                     queue.push(item, item[-1])
+            else:
+                queue.push(next, next[-1])
         if path[2] <= seen[path[0][-1]]:
-            print("i: ", i, path[0][-1], path[3] - path[2], path[3])
-            i += 1
             if problem.isGoalState(path[0][-1]):
                 return path[1]
-            if path[3] - path[2] == 2:
-                a = 15
             successors = problem.getSuccessors(path[0][-1])
             for succ in successors:
                 g = path[2] + succ[2]

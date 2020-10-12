@@ -580,7 +580,7 @@ class ClosestDotSearchAgent(SearchAgent):
 
         "*** YOUR CODE HERE ***"
 
-
+        return search.bfs(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -613,6 +613,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         The state is Pacman's position. Fill this in with a goal test that will
         complete the problem definition.
         """
+        "*** YOUR CODE HERE ***"
         x, y = state
         return self.food[x][y]
 
