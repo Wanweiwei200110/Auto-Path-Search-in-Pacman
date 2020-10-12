@@ -161,23 +161,18 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         if not queue.isEmpty():
             next = queue.pop()
             if path[-1] == next[-1]:
-                ties = [path, next]
+                ties = [(path[-1], path), (next[-1], next)]
                 while not queue.isEmpty():
                     next = queue.pop()
                     if next[-1] != path[-1]:
                         queue.push(next, next[-1])
                         break
                     else:
-                        ties.append(next)
-                ind = 0
-                curr_max = 0
-                for i in range(len(ties)):
-                    if ties[i][2] > curr_max:
-                        curr_max = ties[i][2]
-                        ind = i
-                path = ties.pop(ind)
+                        ties.append((next[-1], next))
+                ties.sort()
+                path = ties.pop()[1]
                 for item in ties:
-                    queue.push(item, item[-1])
+                    queue.push(item[1], item[0])
             else:
                 queue.push(next, next[-1])
         if path[2] <= seen[path[0][-1]]:
