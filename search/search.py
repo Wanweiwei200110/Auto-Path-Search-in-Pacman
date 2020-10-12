@@ -158,23 +158,19 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     seen = {problem.getStartState(): 0}
     while not queue.isEmpty():
         path = queue.pop()
-        if not queue.isEmpty():
+        ties = [(path[-1], path)]
+        while not queue.isEmpty():
             next = queue.pop()
             if path[-1] == next[-1]:
-                ties = [(path[-1], path), (next[-1], next)]
-                while not queue.isEmpty():
-                    next = queue.pop()
-                    if next[-1] != path[-1]:
-                        queue.push(next, next[-1])
-                        break
-                    else:
-                        ties.append((next[-1], next))
-                ties.sort()
-                path = ties.pop()[1]
-                for item in ties:
-                    queue.push(item[1], item[0])
+                ties.append((next[-1], next))
             else:
                 queue.push(next, next[-1])
+                break
+        if len(ties) > 1:
+            ties.sort()
+            path = ties.pop()[1]
+            for item in ties:
+                queue.push(item[1], item[0])
         if path[2] <= seen[path[0][-1]]:
             if problem.isGoalState(path[0][-1]):
                 return path[1]
