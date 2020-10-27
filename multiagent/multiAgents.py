@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -110,6 +110,25 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
     """
+    def dfminimax(self, state, depth, num_agents):
+        best_move = 'Stop'
+        if depth == 0 or state.isWin() or state.isLose():
+            return best_move, self.evaluationFunction(state)
+        if depth % num_agents == 0:
+            turn = 0
+            value = float('-inf')
+        else:
+            turn = num_agents - depth % num_agents
+            value = float('inf')
+        actions = state.getLegalActions(turn)
+        for move in actions:
+            next_state = state.generateSuccessor(turn, move)
+            next_move, next_val = self.dfminimax(next_state, depth - 1, num_agents)
+            if turn == 0 and value < next_val:
+                value, best_move = next_val, move
+            if turn and value > next_val:
+                value, best_move = next_val, move
+        return best_move, value
 
     def getAction(self, gameState):
         """
@@ -135,7 +154,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        depth = self.depth
+        num_agents = gameState.getNumAgents()
+        return self.dfminimax(gameState, depth*num_agents, num_agents)[0]
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """

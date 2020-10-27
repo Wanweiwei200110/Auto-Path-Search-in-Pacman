@@ -730,7 +730,10 @@ if __name__ == '__main__':
 
     > python pacman.py --help
     """
-    args = readCommand(sys.argv[1:])  # Get game components based on input
+    # args = readCommand(sys.argv[1:])  # Get game components based on input
+    # args = readCommand(['-p', 'ReflexAgent'])
+    # args = readCommand(['-p', 'MinimaxAgent', '-l', 'minimaxClassic', '-a', 'depth=4'])
+    args = readCommand(['-p', 'MinimaxAgent', '-l', 'trappedClassic', '-a', 'depth=3'])
     runGames(**args)
 
     # import cProfile
