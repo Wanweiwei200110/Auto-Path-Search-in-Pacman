@@ -110,7 +110,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
     """
-    def dfminimax(self, state, depth, num_agents):
+    def df_minimax(self, state, depth, num_agents):
         best_move = 'Stop'
         if depth == 0 or state.isWin() or state.isLose():
             return best_move, self.evaluationFunction(state)
@@ -123,7 +123,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         actions = state.getLegalActions(turn)
         for move in actions:
             next_state = state.generateSuccessor(turn, move)
-            next_move, next_val = self.dfminimax(next_state, depth - 1, num_agents)
+            next_move, next_val = self.df_minimax(next_state, depth-1, num_agents)
             if turn == 0 and value < next_val:
                 value, best_move = next_val, move
             if turn and value > next_val:
@@ -156,24 +156,74 @@ class MinimaxAgent(MultiAgentSearchAgent):
         "*** YOUR CODE HERE ***"
         depth = self.depth
         num_agents = gameState.getNumAgents()
-        return self.dfminimax(gameState, depth*num_agents, num_agents)[0]
+        return self.df_minimax(gameState, depth*num_agents, num_agents)[0]
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
     """
 
+    def alphabeta(self, state, depth, num_agents, alpha, beta):
+        best_move = 'Stop'
+        if depth == 0 or state.isWin() or state.isLose():
+            return best_move, self.evaluationFunction(state)
+        if depth % num_agents == 0:
+            turn = 0
+            value = float('-inf')
+        else:
+            turn = num_agents - depth % num_agents
+            value = float('inf')
+        actions = state.getLegalActions(turn)
+        for move in actions:
+            next_state = state.generateSuccessor(turn, move)
+            next_move, next_val = self.alphabeta(next_state, depth-1, num_agents, alpha, beta)
+            if turn == 0:
+                if value < next_val:
+                    value, best_move = next_val, move
+                if value >= beta:
+                    return best_move, value
+                alpha = max(alpha, value)
+            else:
+                if value > next_val:
+                    value, best_move = next_val, move
+                if value <= alpha:
+                    return best_move, value
+                beta = min(beta, value)
+        return best_move, value
+
     def getAction(self, gameState):
         """
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        depth = self.depth
+        num_agents = gameState.getNumAgents()
+        return self.alphabeta(gameState, depth*num_agents, num_agents, float('-inf'), float('inf'))[0]
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent (question 4)
     """
+
+    def expecimax(self, state, depth, num_agents):
+        best_move = 'Stop'
+        if depth == 0 or state.isWin() or state.isLose():
+            return best_move, self.evaluationFunction(state)
+        if depth % num_agents == 0:
+            turn = 0
+            value = float('-inf')
+        else:
+            turn = num_agents - depth % num_agents
+            value = 0
+        actions = state.getLegalActions(turn)
+        for move in actions:
+            next_state = state.generateSuccessor(turn, move)
+            next_move, next_val = self.expecimax(next_state, depth-1, num_agents)
+            if turn == 0 and value < next_val:
+                value, best_move = next_val, move
+            if turn:
+                value += float(next_val) / len(actions)
+        return best_move, value
 
     def getAction(self, gameState):
         """
@@ -183,7 +233,9 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        depth = self.depth
+        num_agents = gameState.getNumAgents()
+        return self.expecimax(gameState, depth*num_agents, num_agents)[0]
 
 def betterEvaluationFunction(currentGameState):
     """
