@@ -74,7 +74,46 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        if successorGameState.isWin():
+            return float('inf')
+        if action == Directions.STOP:
+            return float('-inf')
+        score = successorGameState.getScore()
+
+        walls = currentGameState.getWalls()
+        top, right = walls.height - 2, walls.width - 2
+        if newPos[0] <= 2 or newPos[0] >= right - 1 or newPos[1] <= 2 or newPos[1] >= top - 1:
+            score -= 2
+
+        num_agents = currentGameState.getNumAgents()
+        for ind in range(1, num_agents):
+            next_ghost_pos = successorGameState.getGhostPosition(ind)
+            dist_to_ghost = manhattanDistance(newPos, next_ghost_pos)
+            if newScaredTimes[ind-1] < 2:
+                if dist_to_ghost <= 1:
+                    return float('-inf')
+                else:
+                    score += 1 / (dist_to_ghost + 0.1)
+            else:
+                if dist_to_ghost <= 1:
+                    score += 200
+
+        foods = newFood.asList()
+        for food in foods:
+            dist_to_food = manhattanDistance(newPos, food)
+            if dist_to_food == 0:
+                score += 200
+            else:
+                score += 4 ** (-1 * dist_to_food) * 20
+
+        capsules = currentGameState.getCapsules()
+        if newPos in capsules:
+            score += 300
+
+        # score += len(currentGameState.getLegalPacmanActions()) / 5
+        # score += random.random()
+        return score
+
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -242,10 +281,58 @@ def betterEvaluationFunction(currentGameState):
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
     evaluation function (question 5).
 
-    DESCRIPTION: <write something here so we know what you did>
+    DESCRIPTION:
+    The score is calculated by the base score(current score) and a linear
+    combination of the following features:
+    - number of foods left
+    - number of capsules left
+    - min dist to food
+    - min dist to capsule
+    - min dist to regular ghost
+    - min dist to scared ghost
+    Where the negatively weighted features give the pacman incentive to get closer,
+    and the positively weighted features give the pacman incentive to stay away.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    if currentGameState.isWin():
+        return float('inf')
+    if currentGameState.isLose():
+        return -float('inf')
+
+    score = currentGameState.getScore()
+    Pos = currentGameState.getPacmanPosition()
+
+    newGhostStates = currentGameState.getGhostStates()
+    newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+    dist_to_scared_ghost = []
+    dist_to_regular_ghost = []
+    num_agents = currentGameState.getNumAgents()
+    for ind in range(1, num_agents):
+        ghost_pos = currentGameState.getGhostPosition(ind)
+        dist = manhattanDistance(Pos, ghost_pos)
+        if newScaredTimes[ind-1] < 2:
+            dist_to_regular_ghost.append(dist)
+        else:
+            dist_to_scared_ghost.append(dist)
+    min_dist_to_regular_ghost = min(dist_to_regular_ghost) if dist_to_regular_ghost else 0
+    min_dist_to_scared_ghost = min(dist_to_scared_ghost) if dist_to_scared_ghost else 0
+
+    dist_to_food = []
+    foods = currentGameState.getFood().asList()
+    for food in foods:
+        dist_to_food.append(manhattanDistance(Pos, food))
+    min_dist_to_food = min(dist_to_food) if dist_to_food else 0
+
+    dist_to_capsule = []
+    capsules = currentGameState.getCapsules()
+    for capsule in capsules:
+        dist_to_capsule.append(util.manhattanDistance(Pos, capsule))
+    min_dist_to_capsule = min(dist_to_capsule) if dist_to_capsule else 0
+
+    score = score - 25 * len(foods) - 100 * len(capsules) - 3 * min_dist_to_capsule - 1 * min_dist_to_food\
+            - 0.4 * min_dist_to_regular_ghost - 5 * min_dist_to_scared_ghost
+
+    return score
 
 # Abbreviation
 better = betterEvaluationFunction
